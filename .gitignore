@@ -7,3 +7,4 @@
 *.bootinfo
 *.tmc
 *.tpy
+*/*/*/*/*/_Libraries/*

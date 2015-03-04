@@ -1,0 +1,7 @@
+﻿<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.23">
+  <DUT Name="MNG_DataArray" Id="{8be2d91a-e4ac-4047-add4-43ffd7f2fdc8}">
+    <Declaration><![CDATA[TYPE MNG_DataArray : ARRAY[1..MNG_BUFFER_SIZE] OF DWORD; (* user data of max. length *)
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

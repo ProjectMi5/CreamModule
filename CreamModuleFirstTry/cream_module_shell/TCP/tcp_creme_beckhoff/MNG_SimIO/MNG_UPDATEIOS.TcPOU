@@ -1,18 +1,19 @@
-﻿<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.23">
-  <POU Name="MNG_UPDATEIOS" Id="{cb1d6307-b9e5-45da-bfe4-d2638ec1fa21}">
-    <Declaration><![CDATA[FUNCTION_BLOCK MNG_UpdateIOs
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.23">
+  <POU Name="MNG_UpdateIOs">
+    <Declaration>FUNCTION_BLOCK MNG_UpdateIOs
 (* This function block implements simple TCP/IP client protocol.              *)
-(* The max. size of binary tx/rx data has to be <= PLCPRJ_BUFFER_SIZE         *)
+(* The max. size of binary tx/rx data has to be &lt;= PLCPRJ_BUFFER_SIZE         *)
 VAR_IN_OUT
     Outputs : MNG_Application_Outputs_32Bit;    (* Tx user data *)
     Inputs      : MNG_Application_Inputs_32Bit                        ; (* Rx user data *)
 END_VAR
 
 VAR_INPUT
-    bDbg        : BOOL                         := FALSE               ; (* TRUE => Enable debug output, FALSE => Disable debug output *)
+    bDbg        : BOOL                         := FALSE               ; (* TRUE =&gt; Enable debug output, FALSE =&gt; Disable debug output *)
     sRemoteHost : STRING(15)                   := '127.0.0.1'         ; (* IP address of remote server *)	
     nRemotePort : UDINT                        := 5000                ; (* Remote server port *)
-    bEnable     : BOOL                         := FALSE               ; (* TRUE => Enable/connect, FALSE => Disable/disconnect *)
+    bEnable     : BOOL                         := FALSE               ; (* TRUE =&gt; Enable/connect, FALSE =&gt; Disable/disconnect *)
     tReconnect  : TIME                         := T#5s                ;
 END_VAR
 
@@ -47,9 +48,9 @@ VAR
     DWordBuffer      : DWORD                                               ; (* convert DWORD data *)
     DIntBuffer       : DINT                                                ; (* convert DINT data *)
 END_VAR
-]]></Declaration>
+</Declaration>
     <Implementation>
-      <ST><![CDATA[
+      <ST>
 (* refresh clock time                                                         *)
 clock();
 
@@ -74,7 +75,7 @@ CASE state OF
                   nRemotePort := nRemotePort,
                   tReconnect  := tReconnect,
                   bEnable     := bEnable,
-                  eState      => eState);
+                  eState      =&gt; eState);
         IF NOT fbConnect.bBusy THEN
 
             (* Create identification string used by debug messages *)
@@ -129,7 +130,7 @@ CASE state OF
                         tx_state := 0;
                         IF NOT fbSend.bError THEN(* no error *)
                             ;
-                        ELSE(* send error => log error and disconnect *)
+                        ELSE(* send error =&gt; log error and disconnect *)
                             errors.Error(nErrId := fbSend.nErrId );
                             bDisconnect := TRUE;(* set flag *)
                         END_IF
@@ -159,7 +160,7 @@ CASE state OF
                     IF NOT fbReceive.bBusy THEN
                         rx_state := 0;
                         IF NOT fbReceive.bError THEN
-                            IF fbReceive.nRecBytes > 0 THEN (* some bytes received *)
+                            IF fbReceive.nRecBytes &gt; 0 THEN (* some bytes received *)
 
                                 pollTimer( PT := T#0s );(* increase polling speed *)
                                 cbReceived := cbReceived + fbReceive.nRecBytes;
@@ -167,7 +168,7 @@ CASE state OF
                                 (* parse received bytes *)
                                 REPEAT
                                     bAbort := TRUE;(* set flag *)
-                                    IF cbReceived >= SIZEOF(fromServer.Header) THEN (* all header bytes received => check header data *)
+                                    IF cbReceived &gt;= SIZEOF(fromServer.Header) THEN (* all header bytes received =&gt; check header data *)
 
                                         (* correct header data *)
                                         fromServer.Header.ByteCount    := BE32_TO_HOST(fromServer.Header.ByteCount);
@@ -175,19 +176,19 @@ CASE state OF
                                         fromServer.Header.SentTime     := BE32_TO_HOST(fromServer.Header.SentTime);
                                         fromServer.Header.DatagramType := BE32_TO_HOST(fromServer.Header.DatagramType);
 
-                                        IF (fromServer.Header.ByteCount <= SIZEOF( fromServer.Payload))(* check frame (user data) length *)
+                                        IF (fromServer.Header.ByteCount &lt;= SIZEOF( fromServer.Payload))(* check frame (user data) length *)
                                         THEN
 
                                             cbRx := SIZEOF(fromServer.Header) + fromServer.Header.ByteCount;(* calculate the (expected) length of the rx frame *)
-                                            IF cbReceived >= cbRx  THEN (* all frame bytes received? *)
+                                            IF cbReceived &gt;= cbRx  THEN (* all frame bytes received? *)
 
                                                (* currently only use the data on a 32 Bit raw image *)
                                                 IF fromServer.Header.DatagramType = MNG_Raw32BitImage THEN
 
                                                     IF 4 = (fromServer.Header.ByteCount - 4) THEN
 
-                                                        (* BOOL init_sensor_cookie_module0_IR02 *)
-                                                        Inputs.init_sensor_cookie_module0_IR02 := fromServer.Payload[2]<>0;
+                                                        (* BOOL init_sensor_creme_beckhoff_module_IR *)
+                                                        Inputs.init_sensor_creme_beckhoff_module_IR := fromServer.Payload[2]&lt;&gt;0;
 
                                                     ELSE(* receive error: invalid frame format/data *)
                                                         errors.Error(nErrId := PLCPRJ_ERROR_INVALID_IO_FORMAT_RECEIVED );
@@ -208,15 +209,15 @@ CASE state OF
                                             bDisconnect := TRUE;(* set flag *)
                                         END_IF
                                         (* ELSE repeat reading *)
-                                    END_IF (* IF cbReceived >= SIZEOF(rxFrame.head) THEN *)
+                                    END_IF (* IF cbReceived &gt;= SIZEOF(rxFrame.head) THEN *)
 
                                 UNTIL bAbort
                                 END_REPEAT
 
                             ELSE(* fbReceive.nRecBytes = 0, repeat reading *)
                                 pollTimer( PT := PLCPRJ_RECEIVER_POLLING_CYCLE_TIME );(* slow down the polling cycle *)
-                            END_IF(* IF fbReceive.nRecBytes > 0 THEN *)
-                        ELSE(* receive error => log error and disconnect *)
+                            END_IF(* IF fbReceive.nRecBytes &gt; 0 THEN *)
+                        ELSE(* receive error =&gt; log error and disconnect *)
                             errors.Error(nErrId := fbReceive.nErrId );
                             bDisconnect := TRUE;(* set flag *)
                         END_IF
@@ -228,14 +229,14 @@ CASE state OF
         END_IF
 
     3:(* disconnect *)
-        fbConnect( bEnable:= FALSE, eState=>eState );
+        fbConnect( bEnable:= FALSE, eState=&gt;eState );
         IF eState = eSOCKET_DISCONNECTED THEN
             state := 0;
         END_IF
 
 END_CASE
-]]></ST>
+</ST>
     </Implementation>
-    <ObjectProperties />
+    <ObjectProperties/>
   </POU>
 </TcPlcObject>

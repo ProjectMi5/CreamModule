@@ -1,0 +1,10 @@
+﻿<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.23">
+  <DUT Name="VEC3" Id="{45c96f15-9839-4c28-a3ce-6de9e9cf98f7}">
+    <Declaration><![CDATA[TYPE VEC3 :(* 3d position *)
+STRUCT
+	x, y, z : REAL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

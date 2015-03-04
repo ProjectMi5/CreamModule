@@ -19,10 +19,10 @@ END_VAR
 			Module2301.Output.SkillOutput.SkillOutput0.Ready := FALSE;
 			
 			//change in the right error state
-			Module2301.Output.ErrorID := 302;
 			Module2301.Output.CurrentTaskDescription := 'Emergency stop';
 			Module2301.Output.Error := TRUE;
 			Module2301.Output.ErrorDescription := 'Emergency stop. please solve problem';
+			Module2301.Output.ErrorID := 202;
 			
 			//wait for process tool to set the module in manual mode
 			IF(Module2301.Input.Mode = DUT_MODE.Manual) THEN

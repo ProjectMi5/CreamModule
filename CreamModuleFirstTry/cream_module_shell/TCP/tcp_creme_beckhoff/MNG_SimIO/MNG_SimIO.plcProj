@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!-- <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>-->
+    <FileVersion>1.0.0.0</FileVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>
+    </ProjectGuid>
+    <Name>MNG_SimIO_1</Name>
+    <ProgramVersion>3.1.0.8</ProgramVersion>
+    <LibraryReferences>{b31f8937-d137-4168-9c50-bfa5b09aef80}</LibraryReferences>
+    <Application>{33dbad49-4c3f-4ef8-81fd-1646f141de65}</Application>
+    <TypeSystem>{d5fbbd4a-18c5-41dc-9d8d-4bb7fa684865}</TypeSystem>
+    <Implicit_Task_Info>{f24baf16-11c5-4b83-8844-2adfbe696f44}</Implicit_Task_Info>
+    <Implicit_KindOfTask>{4f6353aa-1d20-4480-ac12-b3de65ae889d}</Implicit_KindOfTask>
+    <Implicit_Jitter_Distribution>{89e13094-9c55-4d3d-b6d3-37b3b02ccbeb}</Implicit_Jitter_Distribution>
+    <!--    <OutputType>Exe</OutputType>
+    <RootNamespace>MyApplication</RootNamespace>
+    <AssemblyName>MyApplication</AssemblyName>-->
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="FB_LogFifo.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MAIN.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MNG_APPLICATION_INPUTS_32BIT.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MNG_APPLICATION_OUTPUTS_32BIT.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MNG_DataArray.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MNG_DatagramHeader.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MNG_DatagramType.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MNG_GLOBALS.TcGVL">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MNG_POSE6.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MNG_RawDatagram.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MNG_Simulation.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MNG_TRAFO.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MNG_UpdateIOs.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimIOTask.TcTTO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="VEC3.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <LibraryReference Include="Tc2_Standard,3.3.0.0,Beckhoff Automation GmbH">
+      <Namespace>Tc2_Standard</Namespace>
+    </LibraryReference>
+    <LibraryReference Include="Tc2_System,3.3.5.0,Beckhoff Automation GmbH">
+      <Namespace>Tc2_System</Namespace>
+    </LibraryReference>
+    <LibraryReference Include="Tc2_TcpIp,3.3.2.0,Beckhoff Automation GmbH">
+      <Namespace>Tc2_TcpIp</Namespace>
+    </LibraryReference>
+    <LibraryReference Include="Tc2_Utilities,3.3.7.0,Beckhoff Automation GmbH">
+      <Namespace>Tc2_Utilities</Namespace>
+    </LibraryReference>
+    <LibraryReference Include="Tc3_Interfaces,3.3.0.0,Beckhoff Automation GmbH">
+      <Namespace>Tc3_Interfaces</Namespace>
+    </LibraryReference>
+    <LibraryReference Include="Tc3_Module,3.3.5.0,Beckhoff Automation GmbH">
+      <Namespace>Tc3_Module</Namespace>
+    </LibraryReference>
+  </ItemGroup>
+  <ProjectExtensions />
+  <!-- 
+   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Release\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+-->
+</Project>

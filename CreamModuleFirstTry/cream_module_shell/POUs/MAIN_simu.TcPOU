@@ -1,46 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.25">
+﻿<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.23">
   <POU Name="MAIN_simu" Id="{1aeecb6a-7bb5-41a5-86f8-66496d2adbbe}">
     <Declaration><![CDATA[PROGRAM MAIN_simu
 VAR
     simIO 		: MNG_Simulation;
-	outputs    	: MNG_Application_Outputs_32Bit;
-    inputs     	: MNG_Application_Inputs_32Bit;
-    ioUpdater  	: MNG_UpdateIOs                	:= (sRemoteHost := '192.168.175.222', nRemotePort := 5110);
+	outputs    	: MNG_APPLICATION_OUTPUTS_32BIT;
+    inputs     	: MNG_APPLICATION_INPUTS_32BIT;
+    ioUpdater  	: MNG_UpdateIOs                	:= (sRemoteHost := '192.168.42.31', nRemotePort := 7000);
 	a 			: LREAL							:= 5.00;
     bEnable   	: BOOL                         	:= TRUE;
 END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[// Update IOs with simulation
-//simIO(bEnable := TRUE);
-
-// Application code follows here:
-(*
-IF GVL.infinitsimu THEN
-	outputs.Disc_00_ACT_POS := (REAL_TO_INT(GVL.SensorPosition -180 + GVL.axis.NcToPlc.ModuloActPos))MOD 360;
-ELSE
-	IF GVL.infinitsimu2 THEN
-		outputs.Disc_00_ACT_POS := (REAL_TO_INT(GVL.SensorPosition + GVL.axis.NcToPlc.ModuloActPos))MOD 360;
-	ELSE
-		outputs.Disc_00_ACT_POS := GVL.axis.NcToPlc.ModuloActPos;
-	END_IF	
-END_IF
-
-storageLevel.full := inputs.kein_cookie_mehr_00_IR;
-
-outputs.A2014_09_12_Right_Predeterminado_00_ACT_POS := ABS(SIN(((GVL.axis.NcToPlc.ActPos*pi)/180)))*(-7);
-outputs.A2014_09_12_Left_Predeterminado_00_ACT_POS := ABS(SIN(((GVL.axis.NcToPlc.ActPos*pi)/180)))*(7);
-
-GVL.iCookieInOutput := inputs.cookiebox_sensor_00_IR;
-GVL.iDiskAtStorage := inputs.HallSensor1_00_IR;
-GVL.iDiskAtRamp := inputs.HallSensor2_00_IR;
-
-GVL.init_sensor := inputs.init_sensor_cookie_module_00_IR;
-
-ioUpdater(Outputs := outputs, Inputs => inputs, bEnable := bEnable); 
-*)
-//outputs.Keksquelle_00_ReleaseTime := 60;
-//outputs.Keksquelle_00_AlwaysOn := TRUE;]]></ST>
+      <ST><![CDATA[simIO(bEnable := TRUE);]]></ST>
     </Implementation>
     <ObjectProperties />
   </POU>

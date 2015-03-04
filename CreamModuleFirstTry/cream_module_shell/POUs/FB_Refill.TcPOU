@@ -33,9 +33,9 @@ END_VAR]]></Declaration>
 	step2:	//go in the right error state
 			Module2301.Output.SkillOutput.SkillOutput0.Busy := FALSE;
 			Module2301.Output.CurrentTaskDescription := 'Cream empty. Switching to refill mode.';
-			Module2301.Output.ErrorID := 201;
 			Module2301.Output.Error := TRUE;
 			Module2301.Output.ErrorDescription := 'storage empty. please refill';
+			Module2301.Output.ErrorID := 201;
 			refillSubState := step3;
 			
 	step3:	//wait for process tool to set the module in manual mode

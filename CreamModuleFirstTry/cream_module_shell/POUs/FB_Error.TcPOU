@@ -21,6 +21,10 @@ CASE errorSubState OF
 			Module2301.Output.SkillOutput.SkillOutput0.Error := TRUE;
 			Module2301.Output.SkillOutput.SkillOutput0.Ready := FALSE;
 			
+			//change in the right error state
+			Module2301.Output.CurrentTaskDescription := 'Axis Error';
+			Module2301.Output.Error := TRUE;
+			
 			// Error: axis got stuck
 			IF (axis.Status.ErrorID = 17744) THEN
 				Module2301.Output.ErrorDescription := 'Axis got stuck. Please clear module.';
@@ -33,10 +37,6 @@ CASE errorSubState OF
 				Module2301.Output.ErrorID := 399;
 				errorSubState := step1;
 			END_IF
-			
-			//change in the right error state
-			Module2301.Output.CurrentTaskDescription := 'Axis Error';
-			Module2301.Output.Error := TRUE;
 			
 	step1:	//wait for process tool to set the module in manual mode
 			IF(Module2301.Input.Mode = DUT_MODE.Manual) THEN

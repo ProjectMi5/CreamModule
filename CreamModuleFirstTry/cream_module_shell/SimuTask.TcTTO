@@ -3,9 +3,6 @@
     <!--CycleTime in micro seconds.-->
     <CycleTime>10000</CycleTime>
     <Priority>21</Priority>
-    <PouCall>
-      <Name>MAIN_simu</Name>
-    </PouCall>
     <TaskFBGuid>{bbefebd1-03ba-43f7-997c-a3af13190e91}</TaskFBGuid>
     <Fb_init>{c1b7b8ba-76c4-4327-99e2-a61ee307add5}</Fb_init>
     <Fb_exit>{64dad493-c463-475c-824c-a7c729ccbdac}</Fb_exit>

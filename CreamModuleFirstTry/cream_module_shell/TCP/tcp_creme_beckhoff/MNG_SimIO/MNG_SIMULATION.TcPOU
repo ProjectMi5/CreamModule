@@ -1,6 +1,7 @@
-﻿<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.23">
-  <POU Name="MNG_SIMULATION" Id="{0aa29cfd-9277-4f7e-b5c7-9053e3981bf1}">
-    <Declaration><![CDATA[FUNCTION_BLOCK MNG_Simulation
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.23">
+  <POU Name="MNG_Simulation">
+    <Declaration>FUNCTION_BLOCK MNG_Simulation
 VAR_INPUT
     bEnable    : BOOL                          := FALSE;
     outputs AT %I*   : MNG_Application_Outputs_32Bit         ;
@@ -13,9 +14,9 @@ VAR
     fbCloseAll : FB_SocketCloseAll;
     bCloseAll  : BOOL := TRUE;
 END_VAR
-]]></Declaration>
+</Declaration>
     <Implementation>
-      <ST><![CDATA[(* @END_DECLARATION := '0'                                                    *)
+      <ST>(* @END_DECLARATION := '0'                                                    *)
 IF bCloseAll THEN (*On PLC reset or program download close all old (opened) connections *)
     bCloseAll := FALSE;
     fbCloseAll( bExecute:= TRUE );
@@ -30,10 +31,8 @@ IF NOT fbCloseAll.bBusy THEN
 
 END_IF
 
-GVL.init_sensor := inputs.init_sensor_cookie_module0_IR02;
-
-]]></ST>
+</ST>
     </Implementation>
-    <ObjectProperties />
+    <ObjectProperties/>
   </POU>
 </TcPlcObject>

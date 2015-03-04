@@ -6,6 +6,9 @@
     <PouCall>
       <Name>MAIN</Name>
     </PouCall>
+    <PouCall>
+      <Name>MAIN_simu</Name>
+    </PouCall>
     <TaskFBGuid>{2af6df00-d35e-487d-966b-06bb602e384d}</TaskFBGuid>
     <Fb_init>{22013d8e-6617-4c2f-9a68-fd11c2327836}</Fb_init>
     <Fb_exit>{5e4006c8-4a64-4d7b-8e07-48d12ef0309e}</Fb_exit>

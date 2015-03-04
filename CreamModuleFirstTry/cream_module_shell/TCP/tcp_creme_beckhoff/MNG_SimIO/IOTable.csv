@@ -1,0 +1,2 @@
+ComponentName;Function;DriveType;VarName;VarType;Direction
+init_sensor_creme_beckhoff_module;LightBarrier;;IR;BOOL;READ

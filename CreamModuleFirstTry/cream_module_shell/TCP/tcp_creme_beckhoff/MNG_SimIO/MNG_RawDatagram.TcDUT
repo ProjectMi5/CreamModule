@@ -1,0 +1,11 @@
+﻿<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.23">
+  <DUT Name="MNG_RawDatagram" Id="{a813b0b9-a178-46a2-91b0-1f4e4e5f3985}">
+    <Declaration><![CDATA[TYPE MNG_RawDatagram :(* binary TCP/IP datagram (4 byte aligned) *)
+STRUCT
+	Header	:  MNG_DatagramHeader;(* datagram header *)
+	Payload	:  MNG_DataARRAY;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
