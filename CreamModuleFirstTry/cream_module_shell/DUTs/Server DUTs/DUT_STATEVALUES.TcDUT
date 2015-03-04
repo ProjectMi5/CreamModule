@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.25">
+  <DUT Name="DUT_STATEVALUES" Id="{f6ce6b0f-0e34-4e82-82c8-8fb8a21aca7e}">
+    <Declaration><![CDATA[TYPE DUT_STATEVALUES :
+STRUCT
+	///Free to use = TRUE, busy to use =FALSE
+	Dummy: BOOL := TRUE;
+	///Value of the State
+	Value: LREAL;
+	///Name of the state
+	Name: STRING(80);
+	///Description of the state
+	Description: STRING(80);
+	///Unit of the state ()
+	Unit: STRING(80);
+END_STRUCT
+END_TYPE
+]]></Declaration>
+    <ObjectProperties />
+  </DUT>
+</TcPlcObject>

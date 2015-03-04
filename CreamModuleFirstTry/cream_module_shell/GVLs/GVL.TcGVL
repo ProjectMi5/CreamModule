@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.25">
+  <GVL Name="GVL" Id="{7c45efa3-e1c2-4cfe-a920-126b52956dd3}">
+    <Declaration><![CDATA[VAR_GLOBAL
+	pi : REAL := 3.14159;
+																
+	//<<Input Variables>>//
+	iPositionSens	AT%I*	: INT;			// Position of extruder from sensor
+	
+	//OPC input Variables
+	creamType				: INT;			// chocolate = 0, strawberry jam = 1, apricot jam = 2, cheese = 3
+	optionalExtraCream		: INT;			// plenty = 0, normal = 1
+	
+	//<<Output Variables>>//
+	oModulePosition			: LREAL;
+	
+	//<<Internal Variables>>//
+	axis	 				: AXIS_REF;
+	
+	mainState 				: eMainState	:= eMainState.init;
+	emptySubState			: eSubState 	:= eSubState.step0;	
+	refillSubState			: eSubState		:= eSubState.step0;
+	initSubState			: eSubState		:= eSubstate.step0;
+	readySubState			: eSubState		:= eSubstate.step0;
+	emergencySubState		: eSubState		:= eSubstate.step0;
+	errorSubState			: eSubState		:= eSubstate.step0;
+	resetSubState			: eSubState		:= eSubstate.step0;
+	
+	modulePositionInitialized	: BOOL := FALSE;	// is the module position initialized?
+	firstRun					: bool := true;		// is this the first init? then wait for axis to get ready
+	
+	iMotorPosition			: LREAL;		//Position of extruder from motor encoder
+	
+	stepWidth				: LREAL;					//step width for motor to get optimal cream amount
+	stepBackWidth			: LREAL;					//step width for motor to get optimal cream amount
+	slowVel					: LREAL			:= 2.0;		// velocity for pressing cream out
+	fastVel					: LREAL			:= 20.0;	// velocity for going back to full position
+	fullPos					: LREAL			:= 89.0;	// Position where extruder is full
+	emptyPos				: LREAL			:= 0.0;		// Position where extruder is empty
+
+	//<<For Simulation>>//
+	offset					: LREAL;
+	infinitsimu				: BOOL;
+	infinitsimu2			: BOOL;
+	init_sensor		AT%I*	: BOOL;
+	SensorPosition			: LREAL;
+	
+END_VAR]]></Declaration>
+    <ObjectProperties />
+  </GVL>
+</TcPlcObject>

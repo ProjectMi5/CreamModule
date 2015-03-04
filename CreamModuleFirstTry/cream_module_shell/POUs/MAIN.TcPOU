@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.25">
+  <POU Name="MAIN" Id="{9ff952db-2989-4584-8223-db66e71283a0}">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	FBI_init			: FB_Init;			//FBI = function block instance
+	FBI_refill			: FB_Refill;
+	FBI_ready			: FB_Ready;
+	FBI_emergencyStop 	: FB_EmergencyStop;
+	FBI_error 			: FB_Error;
+	FBI_storageLevel	: FB_StorageLevel;
+	FBI_resetSystem		: FB_ResetSystem;  
+
+	
+	//jonas Interface variables:
+	FBI_Timer			: TOF;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// @TODO measure position of slide against position sensor of XTS
+
+//----------------------------------------- Error handling and emergency stop ------------------------------------------
+axis.ReadStatus();
+
+//reset system
+IF (MI5.reset) THEN	
+	GVL.mainState := eMainState.resetSystem;
+
+//Emergency Stop Watchdog!	
+ELSIF Module2301.Input.EmergencyStop THEN		
+	GVL.mainState := eMainState.emergencyStop;
+
+// error handling
+ELSIF (axis.Status.Error) THEN					
+	GVL.mainState := eMainState.error;
+	
+END_IF
+
+
+//------------------------------------------------ OPC UA and module init --------------------------------------------------------------
+
+//Connection Test
+Module2301.Output.ConnectionTestOutput := Module2301.Input.ConnectionTestInput;
+//positionsweitergabe an procvess tool
+Module2301.Output.PositionOutput := Module2301.Input.PositionInput + 31;
+
+//module positioning (by jf)
+FBI_Timer();
+IF GVL.init_sensor THEN
+	Module2301.Output.PositionSensor := TRUE;
+	FBI_Timer(IN := TRUE,PT := T#400MS);
+	FBI_Timer(IN := FALSE,PT := T#400MS);
+ELSE
+	Module2301.Output.PositionSensor := FBI_Timer.Q;
+END_IF
+
+
+//----------------------------------------------- cream function process and parameter reading ----------------------------------------------------
+
+// determine stepWidth from creamType
+IF (MI5.mySkillID = 1230 OR MI5.mySkillID = 1250) THEN				// raspberry jam or apricot
+	GVL.stepWidth := -3.5 - (Module2301.Input.SkillInput.SkillInput0.ParameterInput.ParameterInput0.Value / 100);
+	GVL.stepBackWidth := 2;
+ELSIF (MI5.mySkillID = 1240) THEN			// applesauce
+	GVL.stepWidth := -4.5 - (Module2301.Input.SkillInput.SkillInput0.ParameterInput.ParameterInput0.Value / 100);
+	GVL.stepBackWidth := 3;
+END_IF
+
+
+// get constantly the position of extruder
+GVL.iMotorPosition := axis.NcToPlc.ActPos;
+
+// update motor position for simulation
+Module2301.Output.StateValue.StateValue2.Value := GVL.iMotorPosition;
+
+//calculate storage level
+FBI_storageLevel();
+
+
+//----------------------------------------------- pseudo function block calls ----------------------------------------------------------------------
+
+CASE GVL.mainState OF
+
+	eMainState.init: //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		//init of state whereever the position of the disk is
+		FBI_init();
+	
+	eMainState.ready: //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		//cookie is on the clamps, waiting for putting it on the mover
+		FBI_ready();
+	
+	eMainState.refill: //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		//cookie storage empty --> needs to be refilled
+		FBI_refill();
+		
+	eMainState.emergencyStop: //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		// manually set emergency stop
+		FBI_emergencyStop();
+		
+	eMainState.error: //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		// error state
+		FBI_error();
+		
+	eMainState.resetSystem: //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		//error state
+		FBI_resetSystem(); 
+		
+END_CASE
+	
+]]></ST>
+    </Implementation>
+    <ObjectProperties />
+  </POU>
+</TcPlcObject>

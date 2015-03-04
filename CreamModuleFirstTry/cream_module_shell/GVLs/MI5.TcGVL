@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.25">
+  <GVL Name="MI5" Id="{010b7040-a387-4597-94ac-867dbd568a07}">
+    <Declaration><![CDATA[VAR_GLOBAL
+	//<<OPC-UA Module Interface>>//
+	{attribute 'OPC.UA.DA' := '1'}
+	Module2301 : DUT_SERVER_MODULE_INTERFACE;
+	{attribute 'OPC.UA.DA' := '1'}
+	mySkillID : INT := 1230;		//default: 1230 raspberry jam, 1240 for apple sauce, 1250 for apricot
+	{attribute 'OPC.UA.DA' := '1'}
+	reset : BOOL := false;
+END_VAR]]></Declaration>
+    <ObjectProperties />
+  </GVL>
+</TcPlcObject>

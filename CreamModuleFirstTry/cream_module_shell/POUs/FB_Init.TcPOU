@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.25">
+  <POU Name="FB_Init" Id="{08132d8b-3fed-49ef-9294-a5c6dd06605d}">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Init
+VAR_INPUT
+END_VAR
+VAR_OUTPUT	
+END_VAR
+VAR
+	resetAxis	: FB_ResetAxis;
+	timer		: FB_Timer;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//@TODO: Determine the correct difference between sensor value and motorposition
+
+//>>>OPCUA Init<<<
+CASE initSubState OF	
+			
+step0:		// wait for everything to boot in first run
+			IF (firstRun) THEN
+				timer(iTime:=T#5S, execute := TRUE);
+				IF(timer.done) THEN
+					firstRun := FALSE;
+				END_IF
+			ELSE
+				initSubState := step1;
+			END_IF
+
+step1:		//reset all substates
+			emptySubState := step0;
+			refillSubState := step0;
+			readySubState := step0;
+			emergencySubState := step0;
+			errorSubState := step0;
+
+			//>>>OPCUA Init<<<
+			//>Module<
+			Module2301.Output.ID := 2301;
+			Module2301.Output.Name := 'Cream module Beckhoff';
+			Module2301.Output.IP := '192.168.192.138';
+			Module2301.Output.CurrentTaskDescription := 'Init process started: OPC UA';
+			Module2301.Output.Dummy := FALSE;
+			Module2301.Output.Idle := FALSE;
+			Module2301.Output.Error := FALSE;
+			Module2301.Output.ErrorDescription := '';
+			Module2301.Output.ErrorID := 0;			
+			
+			//>Skill<:
+			//Skill Cream
+			Module2301.Output.SkillOutput.SkillOutput0.ID := mySkillID;
+			Module2301.Output.SkillOutput.SkillOutput0.Activated := TRUE;
+			Module2301.Output.SkillOutput.SkillOutput0.Busy := TRUE;
+			Module2301.Output.SkillOutput.SkillOutput0.Done := FALSE;
+			Module2301.Output.SkillOutput.SkillOutput0.Error := FALSE;
+			Module2301.Output.SkillOutput.SkillOutput0.Ready := FALSE;
+			Module2301.Output.SkillOutput.SkillOutput0.Dummy := FALSE;
+			
+			// publish maximum level of cream for HMI
+			Module2301.Output.StateValue.StateValue1.Description := 'Maximum level of cream in injection.';
+			Module2301.Output.StateValue.StateValue1.Dummy := FALSE;
+			Module2301.Output.StateValue.StateValue1.Name := 'Max. Cream';
+			Module2301.Output.StateValue.StateValue1.Unit := 'ml';
+			Module2301.Output.StateValue.StateValue1.Value := 113;
+			
+			// publish motor position for simulation
+			Module2301.Output.StateValue.StateValue2.Description := 'Motor Position.';
+			Module2301.Output.StateValue.StateValue2.Dummy := FALSE;
+			Module2301.Output.StateValue.StateValue2.Name := 'Motor Position';
+			Module2301.Output.StateValue.StateValue2.Unit := 'mm';
+			
+			//initialize position input with value -1
+			IF (NOT GVL.modulePositionInitialized)THEN
+				Module2301.Input.PositionInput := -1;
+				GVL.modulePositionInitialized := TRUE;
+			END_IF
+							
+			resetAxis (execute := FALSE);
+			
+			IF (axis.Status.StandStill OR axis.Status.ErrorStop OR axis.Status.Disabled) THEN
+				initSubState := step2;
+			END_IF			
+
+			
+step2:		IF NOT resetAxis.done THEN
+				// axreset
+				resetAxis (execute := TRUE);
+			ELSE
+				initSubState := step3;
+			END_IF
+			
+			
+step3:		IF (iMotorPosition <=5) THEN
+				mainState := eMainState.refill;
+			ELSE
+				mainState := eMainState.ready;
+			END_IF
+				initSubState := step0;
+END_CASE]]></ST>
+    </Implementation>
+    <ObjectProperties />
+  </POU>
+</TcPlcObject>

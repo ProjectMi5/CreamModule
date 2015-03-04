@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.25">
+  <POU Name="FB_MoveAbs" Id="{54bfd5b6-497e-413e-a189-1a85f6a6acd2}">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_MoveAbs
+VAR_INPUT
+	targetPos		: LREAL;
+	targetVel		: LREAL;
+	execute			: BOOL := TRUE;
+	
+END_VAR
+
+VAR_OUTPUT
+	done 			: BOOL;
+	moveAbs			: Tc2_MC2.MC_MoveAbsolute;
+END_VAR
+
+VAR
+	state		: INT := -10;
+	power		: Tc2_MC2.MC_Power;
+END_VAR
+
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//Comment here
+IF (NOT execute) THEN
+	state := -10;
+	moveAbs	(Axis:= axis , Execute:= FALSE);
+ELSE
+	//Comment here
+	power(
+			Axis			:= axis , 
+			Enable			:= TRUE , 
+			Enable_Positive	:= TRUE , 
+			Enable_Negative	:= TRUE , 
+			BufferMode		:= Tc2_MC2.MC_BlendingNext
+		);				
+					
+	CASE state OF 
+		 
+		-10:	//Comment here
+				done := FALSE;
+				IF (power.Status=TRUE AND power.Error=FALSE) THEN
+					state := 0;
+				END_IF
+							
+		0:		//Comment here
+				moveAbs(Axis:= axis , Execute:= FALSE);
+				state := 10;			
+				
+		10:		//Comment here
+				IF (moveAbs.Done=FALSE) THEN
+					moveAbs(Axis:= axis, Execute:= TRUE, Position:= targetPos, Velocity:=targetVel, BufferMode:= Tc2_MC2.MC_BlendingNext);
+				ELSE 
+					moveAbs(Axis:= axis, Execute:= FALSE);
+					state := 20;
+				END_IF
+				
+		20: 	//Comment here
+				done 	:= TRUE;
+				execute := false;
+				state	:= -10;	
+	END_CASE
+END_IF]]></ST>
+    </Implementation>
+    <ObjectProperties />
+  </POU>
+</TcPlcObject>

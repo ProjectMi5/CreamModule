@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.25">
+  <POU Name="FB_ResetSystem" Id="{bb9f8489-558f-45ad-a37b-973d9d98e170}">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ResetSystem
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	resetAxis : FB_ResetAxis;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE GVL.resetSubState OF
+
+step0:	resetAxis (execute := FALSE);
+
+		Module2301.Output.SkillOutput.SkillOutput0.Busy := TRUE;
+		Module2301.Output.SkillOutput.SkillOutput0.Done := TRUE;
+		Module2301.Output.SkillOutput.SkillOutput0.Error := TRUE;
+		Module2301.Output.SkillOutput.SkillOutput0.Ready := TRUE;
+		
+		GVL.resetSubState := step1;
+		
+step1:	IF NOT resetAxis.done THEN
+		// axreset
+		resetAxis (execute := TRUE);
+		ELSE
+			GVL.resetSubState := step2;
+		END_IF
+		
+step2:	// reset substates
+		GVL.emptySubState := step0;
+		GVL.refillSubState := step0;
+		GVL.initSubState := step0;
+		GVL.readySubState := step0;
+		GVL.emergencySubState := step0;
+		GVL.errorSubState := step0;
+		GVL.resetSubState := step0;
+		
+		MI5.reset := FALSE;
+		GVL.mainState := eMainState.init;		
+		
+END_CASE]]></ST>
+    </Implementation>
+    <ObjectProperties />
+  </POU>
+</TcPlcObject>

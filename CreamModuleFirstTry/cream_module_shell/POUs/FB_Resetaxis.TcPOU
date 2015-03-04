@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.25">
+  <POU Name="FB_ResetAxis" Id="{d2c2aa74-0f1e-44e1-b4db-6e1123dc3e00}">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ResetAxis
+VAR_INPUT
+	execute: BOOL;
+END_VAR
+VAR_OUTPUT
+	done : BOOL;
+	busy : BOOL;
+	error: BOOL;
+END_VAR
+VAR
+	state			: INT := 0;
+	fbreset			: Tc2_MC2.MC_Reset;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF execute THEN
+	CASE state OF
+	
+	0: 
+		done := FALSE;
+		fbreset(axis := axis, Execute := FALSE);
+		state := 1;
+		
+	1:
+		fbreset(
+				Axis:= axis, 
+				Execute:= TRUE, 
+				Done=> , 
+				Busy=> , 
+				Error=> error, 
+				ErrorID=> );
+		IF fbreset.Done THEN
+			state := 2;
+		END_IF
+		
+	2:	
+		execute := FALSE;
+		done  := TRUE;
+		state := 0;
+
+	END_CASE
+ELSE
+	done := FALSE;
+	state := 0;
+END_IF]]></ST>
+    </Implementation>
+    <ObjectProperties />
+  </POU>
+</TcPlcObject>

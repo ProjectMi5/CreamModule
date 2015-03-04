@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.25">
+  <POU Name="FB_StorageLevel" Id="{b5bf3d47-474b-4b2f-ba40-38d81e67109f}">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_StorageLevel
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	calculatedCream		: LREAL;
+	remainingCream		: LREAL;		// in ml, is calculated by motor position
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//Comment here	
+IF (GVL.iPositionSens > 11090) THEN
+	remainingCream := 0;
+// configuration for all cookies (not as acurate)
+ELSE
+	calculatedCream := (11110 - GVL.iPositionSens)/86;
+	remainingCream := REAL_TO_INT(calculatedCream);
+END_IF
+
+Module2301.Output.StateValue.StateValue0.Description := 'Remaining cream in the module.';
+Module2301.Output.StateValue.StateValue0.Dummy := FALSE;
+Module2301.Output.StateValue.StateValue0.Name := 'Remaining Cream';
+Module2301.Output.StateValue.StateValue0.Unit := 'ml';
+Module2301.Output.StateValue.StateValue0.Value := remainingCream;]]></ST>
+    </Implementation>
+    <ObjectProperties />
+  </POU>
+</TcPlcObject>

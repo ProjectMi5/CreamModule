@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.25">
+  <POU Name="FB_Refill" Id="{9061f4bf-3136-4880-ae3d-68799f132320}">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Refill
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	moveAbs : FB_MoveAbs;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE refillSubState OF
+
+	step0:	//set OPC state variables
+			Module2301.Output.SkillOutput.SkillOutput0.Busy := TRUE;
+			Module2301.Output.SkillOutput.SkillOutput0.Done := FALSE;
+			Module2301.Output.SkillOutput.SkillOutput0.Error := FALSE;
+			Module2301.Output.SkillOutput.SkillOutput0.Ready := FALSE;
+			
+			//reset move functions
+			moveAbs(execute := FALSE);
+			
+			refillSubState := step1; 
+	
+	step1:	//Move back to position with cream extruder beeing fully extended
+			moveAbs(targetPos:= GVL.fullPos, targetVel:= GVL.fastVel, execute:= TRUE);
+			IF (moveAbs.done) THEN
+				refillSubState := step2; 
+			END_IF
+			
+
+	step2:	//go in the right error state
+			Module2301.Output.SkillOutput.SkillOutput0.Busy := FALSE;
+			Module2301.Output.CurrentTaskDescription := 'Cream empty. Switching to refill mode.';
+			Module2301.Output.ErrorID := 201;
+			Module2301.Output.Error := TRUE;
+			Module2301.Output.ErrorDescription := 'storage empty. please refill';
+			refillSubState := step3;
+			
+	step3:	//wait for process tool to set the module in manual mode
+			IF(Module2301.Input.Mode = DUT_MODE.Manual) THEN
+				refillSubState := step4;
+			END_IF
+			
+	step4:	//wait for process tool to set the module in init mode
+			IF(Module2301.Input.Mode = DUT_MODE.Auto) THEN
+				//reset error 
+				Module2301.Output.Error := FALSE;
+				Module2301.Output.ErrorDescription := '';
+				Module2301.Output.ErrorID := 0;
+				
+				//change to ready state
+				mainState := eMainState.ready;
+				refillSubState := step0;
+			END_IF
+END_CASE]]></ST>
+    </Implementation>
+    <ObjectProperties />
+  </POU>
+</TcPlcObject>

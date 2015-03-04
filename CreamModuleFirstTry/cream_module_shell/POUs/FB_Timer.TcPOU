@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.25">
+  <POU Name="FB_Timer" Id="{cd3c1133-0631-488c-a8ad-d0587f5103bb}">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Timer
+VAR_INPUT
+	iTime	: TIME;
+	execute : Bool;
+END_VAR
+VAR_OUTPUT
+	done	: BOOL;
+END_VAR
+VAR
+	timer	: Tc2_Standard.TON;
+	state	: INT := 0;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF (execute) THEN
+	
+	CASE state OF
+	
+		0:	done := FALSE;
+			timer(IN:= FALSE, PT:= iTime);
+			timer(IN:= TRUE, PT:= iTime);
+			state := 10;
+	
+		10:	timer();
+			IF (timer.Q) THEN
+				done := TRUE;
+				state :=0;
+			END_IF
+	END_CASE
+
+ELSE
+	state := 0;
+	done := FALSE;
+END_IF		]]></ST>
+    </Implementation>
+    <ObjectProperties />
+  </POU>
+</TcPlcObject>

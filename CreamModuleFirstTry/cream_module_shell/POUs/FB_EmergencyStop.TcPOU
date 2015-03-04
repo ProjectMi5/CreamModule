@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.25">
+  <POU Name="FB_EmergencyStop" Id="{2676421f-a439-4c78-876b-2d65f5154178}">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_EmergencyStop
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE emergencySubState OF
+
+	step0:	Module2301.Output.SkillOutput.SkillOutput0.Busy := FALSE;
+			Module2301.Output.SkillOutput.SkillOutput0.Done := FALSE;
+			Module2301.Output.SkillOutput.SkillOutput0.Dummy := FALSE;
+			Module2301.Output.SkillOutput.SkillOutput0.Error := TRUE;
+			Module2301.Output.SkillOutput.SkillOutput0.Ready := FALSE;
+			
+			//change in the right error state
+			Module2301.Output.ErrorID := 302;
+			Module2301.Output.CurrentTaskDescription := 'Emergency stop';
+			Module2301.Output.Error := TRUE;
+			Module2301.Output.ErrorDescription := 'Emergency stop. please solve problem';
+			
+			//wait for process tool to set the module in manual mode
+			IF(Module2301.Input.Mode = DUT_MODE.Manual) THEN
+				emergencySubState := step1;
+			END_IF
+			
+	step1:	//wait for process tool to set the module in init mode
+			IF(Module2301.Input.Mode = DUT_MODE.Auto) THEN
+				//reset error 
+				Module2301.Output.Error := FALSE;
+				Module2301.Output.ErrorDescription := '';
+				Module2301.Output.ErrorID := 0;
+
+				//change to init state
+				initSubState := step0;
+				mainState := eMainState.init;
+				emergencySubState := step0;
+			END_IF
+END_CASE
+
+]]></ST>
+    </Implementation>
+    <ObjectProperties />
+  </POU>
+</TcPlcObject>

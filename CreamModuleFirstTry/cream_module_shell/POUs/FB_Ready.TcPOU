@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.25">
+  <POU Name="FB_Ready" Id="{71d9dff5-d23a-4c84-bde7-a6053dac4ec3}">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Ready
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	moveRel : FB_MoveRel;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE readySubState OF
+
+step0:	moveRel(execute := false);
+		IF (NOT (Module2301.Input.PositionInput = -1)) THEN
+			readySubState := step1;
+		END_IF
+
+step1:	Module2301.Output.SkillOutput.SkillOutput0.Busy := FALSE;
+		Module2301.Output.SkillOutput.SkillOutput0.Done := FALSE;
+		Module2301.Output.SkillOutput.SkillOutput0.Error := FALSE;
+		Module2301.Output.SkillOutput.SkillOutput0.Ready := TRUE;
+		
+		//wait for execute command
+		IF(Module2301.Input.SkillInput.SkillInput0.Execute) THEN
+		//order received
+			Module2301.Output.SkillOutput.SkillOutput0.Ready := FALSE;
+			Module2301.Output.SkillOutput.SkillOutput0.Busy := TRUE;
+			readySubState := step2;
+		END_IF
+		
+step2:	//@TODO: How much has the Bosch motor got to move to eject sufficient amount of cream?
+		moveRel(targetDis:= GVL.stepWidth, targetVel:= GVL.slowVel, execute:= TRUE);
+		IF (moveRel.done) THEN
+			readySubState := step3; 
+		END_IF
+		
+step3:	//@TODO: How much has the Bosch motor got to move to eject sufficient amount of cream?
+		moveRel(targetDis:= GVL.stepBackWidth, targetVel:= GVL.slowVel, execute:= TRUE);
+		IF (moveRel.done) THEN
+			Module2301.Output.SkillOutput.SkillOutput0.Busy := FALSE;
+			Module2301.Output.SkillOutput.SkillOutput0.Done := TRUE;
+			readySubState := step4; 
+		END_IF
+		
+step4:	// Test if distance sensor checks a position where the cream dispenser has to be empty
+		IF (NOT Module2301.Input.SkillInput.SkillInput0.Execute) THEN
+			IF (iMotorPosition <=5) THEN
+				mainState := eMainState.refill;
+			ELSE
+				readySubState := step0;
+			END_IF
+		END_IF
+
+END_CASE]]></ST>
+    </Implementation>
+    <ObjectProperties />
+  </POU>
+</TcPlcObject>

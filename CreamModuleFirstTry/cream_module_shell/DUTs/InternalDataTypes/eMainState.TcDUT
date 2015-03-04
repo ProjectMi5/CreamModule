@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.25">
+  <DUT Name="eMainState" Id="{78593579-3f95-451d-9ae5-bf03315db0c9}">
+    <Declaration><![CDATA[TYPE eMainState :
+(
+	init			:= 0,
+	ready			:= 10,
+	output			:= 20,
+	empty			:= 30,
+	refill			:= 40,
+	emergencyStop	:= 50,
+	error			:= 60,
+	resetSystem		:= 70
+);
+END_TYPE]]></Declaration>
+    <ObjectProperties />
+  </DUT>
+</TcPlcObject>
